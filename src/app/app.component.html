@@ -1,0 +1,36 @@
+<section>
+  <div class="header-bar ">
+    <img src="assets/images/app-logo.png"/>
+    <h1 class="title">
+      Denoising images
+    </h1>
+  </div>
+  <div class="content">
+    <div class="input-column">
+      <span>Before</span>
+      <div class="image-input" id="imageInput">
+        <!-- Or choose file -->
+        <label for="fileInput">
+          <img src="assets/images/plus.png" />
+        </label>
+        <!-- Allow drag and drop -->
+        <p class="title-input">Drag & drop an image file here</p>
+        <input type="file" id="fileInput" accept="image/*">
+      </div>
+    </div>
+    
+    <img src = "assets/images/next.png"/>
+    <div class="input-column">
+      <span >After</span>
+      <div class="image-show">
+        
+      </div>
+    </div>
+  </div>
+  <div class="denoise-btn-container">
+    <button class="denoise-btn" id="denoiseBtn">Denoise</button>
+    <button class="download-btn" id="downloadBtn">Download Image</button>
+  </div>
+</section>
+
+

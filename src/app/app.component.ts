@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { AppSwal } from './services/app.swal';
 import { AppService } from './services/app..service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { convertImageToPng } from './utils/image-conversion.util';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,8 @@ export class AppComponent {
   title = 'DA2-FE';
 
   selectedFile: File | null = null;
+  convertedImage: File | null = null;
+  denoisedBlob: Blob;
   filePreview: string | ArrayBuffer | null = null;
   imageAfterUrl: string;
   sanitizedImageUrl: SafeUrl;
@@ -64,13 +67,15 @@ export class AppComponent {
     }
   
     try {
-      const result = await this.appService.doPOST("upload-image", this.selectedFile);
+      const pngFile = await convertImageToPng(this.selectedFile);
+      this.convertedImage = pngFile;
+      const result = await this.appService.doPOST("upload-image", this.convertedImage);
       if (result) {
         if (result.status == 200) {
-          const blob = await result.blob();
+          this.denoisedBlob = await result.blob();
       
           // Create a URL for the Blob object
-          const imageUrl = URL.createObjectURL(blob);
+          const imageUrl = URL.createObjectURL(this.denoisedBlob);
 
           // Now you can use imageUrl to display the image in your Angular component
           console.log('Image URL:', imageUrl);
@@ -88,25 +93,19 @@ export class AppComponent {
     this.sanitizedImageUrl = this.sanitizer.bypassSecurityTrustUrl(blobUrl);
   }
 
-  downloadImage(){
-    if (this.selectedFile) {
-      // Create a temporary anchor element
-      const link = document.createElement('a');
-      link.setAttribute('href', window.URL.createObjectURL(this.selectedFile));
-      link.setAttribute('download', this.selectedFile.name);
-
-      // Append the anchor element to the body
-      document.body.appendChild(link);
-
-      // Trigger a click event on the anchor element
-      link.click();
-
-      // Remove the anchor element from the body
-      document.body.removeChild(link);
-    } else {
-      // Handle error: No file selected
-      this.appSwal.showError("Bạn chưa thêm hình vào.")
-      console.error('No file selected.');
+  downloadBlob(): void {
+    if(this.sanitizedImageUrl == null){
+      this.appSwal.showError("Bạn chưa denoise hình ảnh");
+      return;
     }
+    const url = URL.createObjectURL(this.denoisedBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'denoised-image.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url); // Clean up the URL object
   }
+
 }

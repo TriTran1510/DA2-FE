@@ -15,7 +15,7 @@
         </label>
         <!-- Allow drag and drop -->
         <p class="title-input" *ngIf="!selectedFile">Drag & drop an image file here</p>
-        <input #fileInput type="file" id="fileInput" (change)="onFileSelected($event)" accept="image/*">
+        <input #fileInput type="file" id="fileInput" (change)="onFileSelected($event)" accept=".png,.jpg,.jpeg">
         <div *ngIf="selectedFile" class = "image-review" (click)="triggerFileInput()">
           <!-- <p>Selected file: {{ selectedFile.name }}</p> -->
           <img [src]="filePreview" *ngIf="filePreview" alt="File preview">
@@ -35,7 +35,7 @@
   </div>
   <div class="denoise-btn-container">
     <button class="denoise-btn" id="denoiseBtn" (click)="denoiseImage()">Denoise</button>
-    <button class="download-btn" id="downloadBtn" (click)="downloadImage()">Download Image</button>
+    <button class="download-btn" id="downloadBtn" (click)="downloadBlob()">Download Image</button>
   </div>
 </section>
 
